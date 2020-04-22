@@ -1,11 +1,20 @@
 const express = require('express');
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 const app = express();
 
 const rotaProdutos = require('./routes/produtos');
 const rotaPedidos = require('./routes/pedidos');
 
 app.use(morgan('dev'));
+app.use(bodyParser.urlencoded( { extended: false } ))
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    res.header('Acces-Control-Allow-Origin', '*');
+    res.header('Acces-Control-Alow-Header', 'Origin', 'Content-Type', "X-Requested-With", "Authorization")
+    next();
+})
 
 app.use('/produtos', rotaProdutos);
 app.use('/pedidos', rotaPedidos);

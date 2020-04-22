@@ -8,13 +8,20 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
+
+    const pedido = { 
+        id_pedido: req.body.id_produto,
+        quantidade: req.body.quantidade
+    }
+
     res.status(201).send({
-        mensagem: "Usando o POST dentro da rota de pedidos."
+        mensagem: "Usando o POST dentro da rota de pedidos.",
+        pedidoCriado: pedido
     })
 });
 
-router.get('/:id_pedidos', (req, res, next) => {
-    const id = req.params.id_pedidos
+router.get('/:id_pedido', (req, res, next) => {
+    const id = req.params.id_pedido
     if(id === 'especial') {
         res.status(200).send({
             mensagem: "Id Especial.",
