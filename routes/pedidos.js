@@ -7,27 +7,43 @@ router.get("/", (req, res, next) => {
     if (error) {
       return res.status(500).send({ error: error });
     }
-    conn.query("SELECT * FROM pedidos;", (error, result, fild) => {
-      if (error) {
-        return res.status(500).send({ error: error });
+    conn.query(
+      `
+        SELECT pedidos.id_pedido,
+               pedidos.quantidade,
+               produtos.id_produto,
+               produtos.nome,
+               produtos.preco
+          FROM pedidos
+    INNER JOIN produtos
+            ON produtos.id_produto = pedidos.id_produto; 
+    `,
+      (error, result, fild) => {
+        if (error) {
+          return res.status(500).send({ error: error });
+        }
+        const response = {
+          quantidade: result.length,
+          pedidos: result.map((ped) => {
+            return {
+              id_pedido: ped.id_pedido,
+              quantidade: ped.quantidade,
+              produto: {
+                id_produto: ped.id_produto,
+                nome: ped.nome,
+                preco: ped.preco,
+              },
+              request: {
+                tipo: "GET",
+                descricao: "Retorna todos os detalhe de um pedido.",
+                url: `http://loaclhost:5000/pedidos/${ped.id_pedido}`,
+              },
+            };
+          }),
+        };
+        return res.status(201).send(response);
       }
-      const response = {
-        quantidade: result.length,
-        pedidos: result.map((ped) => {
-          return {
-            id_pedido: ped.id_pedido,
-            id_produto: ped.id_produto,
-            quantidade: ped.quantidade,
-            request: {
-              tipo: "GET",
-              descricao: "Retorna todos os detalhe de um pedido.",
-              url: `http://loaclhost:5000/pedidos/${ped.id_pedido}`,
-            },
-          };
-        }),
-      };
-      return res.status(201).send(response);
-    });
+    );
   });
 });
 
