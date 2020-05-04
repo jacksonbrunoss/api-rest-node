@@ -7,8 +7,11 @@ const rotaProdutos = require("./routes/produtos");
 const rotaPedidos = require("./routes/pedidos");
 
 app.use(morgan("dev"));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(bodyParser.json());
+app.use('/uploads', express.static('uploads'));
 
 app.use((req, res, next) => {
   res.header("Acces-Control-Allow-Origin", "*");
